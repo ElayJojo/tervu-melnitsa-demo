@@ -75,7 +75,7 @@ export const media = {
   },
   "shore": {
     "alt": "Баня на причале среди камышей у берега Ладоги",
-    "src": "./photos/ladoga-sauna-lg.webp",
-    "small": "./photos/ladoga-sauna-sm.webp"
+    "src": "./photos/sauna-evening-lg.webp",
+    "small": "./photos/sauna-evening-sm.webp"
   }
 };

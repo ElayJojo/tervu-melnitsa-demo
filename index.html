@@ -58,69 +58,115 @@
     </section>
 
     <section class="site-shell homes" id="houses" aria-labelledby="houses-title">
-      <h2 id="houses-title">Дома на хуторе</h2>
+      <div class="homes-heading">
+        <h2 id="houses-title">Дома на хуторе</h2>
+        <nav class="homes-nav" aria-label="Перейти к дому">
+          <a href="#guest-house">Гостевой дом</a>
+          <a href="#family-house">Семейный корпус</a>
+        </nav>
+      </div>
       <div class="home-grid">
-        <article class="home-card" data-home="guest" aria-labelledby="guest-title">
-          <div class="home-visual">
-            <button type="button" class="home-gallery" aria-label="Все фото гостевого дома">
-              <img loading="lazy" decoding="async" alt="">
-              <span class="gallery-label"><svg viewBox="0 0 20 20" width="19" height="19" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="14" height="14" rx="1.5"/><path d="m3 14 5-5 3 3 2-2 4 4"/><circle cx="13" cy="7" r="1"/></svg> <span>Все фото</span></span>
-            </button>
-            <button type="button" class="home-bedroom" aria-label="Фотография спальных мест">
-              <img loading="lazy" decoding="async" alt="">
-              <span>Внутри дома <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 12l8-8m-6 0h6v6"/></svg></span>
-            </button>
-          </div>
-          <div class="home-body">
+        <article class="home-card" id="guest-house" data-home="guest" aria-labelledby="guest-title">
+          <button type="button" class="home-gallery" aria-label="Гостевой дом с крыльцом. Открыть все фотографии" aria-haspopup="dialog">
+            <img src="./photos/guest-exterior-lg.webp" srcset="./photos/guest-exterior-sm.webp 840w, ./photos/guest-exterior-lg.webp 1680w" sizes="(max-width: 720px) 100vw, (max-width: 1560px) 54vw, 826px" width="1680" height="1120" loading="lazy" decoding="async" alt="" draggable="false">
+            <span class="home-expand" aria-hidden="true">
+              <svg viewBox="0 0 20 20" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 8V4h4m4 0h4v4m0 4v4h-4m-4 0H4v-4"/></svg>
+            </span>
+          </button>
+          <div class="home-intro">
             <h3 id="guest-title">Гостевой дом</h3>
-            <p class="home-capacity">6 основных мест + 2 дополнительных</p>
-            <dl class="home-facts">
-              <div><dt>Спальные места</dt><dd>Наверху две спальни по две односпальные кровати. В одной из комнат кровати можно сдвинуть. Внизу двухъярусная кровать в спальне и раскладной диван в гостиной.</dd></div>
-            </dl>
-            <div class="home-rates">
-              <p id="guest-rates">Стоимость за ночь</p>
-              <dl aria-labelledby="guest-rates">
-                <div><dt>Пн–Чт</dt><dd data-rate="weekday"></dd></div>
-                <div><dt>Пт–Вс</dt><dd data-rate="weekend"></dd></div>
-                <div><dt>Праздники</dt><dd data-rate="holiday"></dd></div>
-              </dl>
+            <p class="home-meta"><span><span aria-hidden="true">6 мест + 2 доп.</span><span class="home-capacity-full">6 основных мест и 2 дополнительных</span></span> <span>от <b data-rate="weekday">14 000 ₽</b> за ночь</span></p>
+          </div>
+          <button type="button" class="home-bedroom" aria-label="Спальня с двумя кроватями. Увеличить фото" aria-haspopup="dialog" aria-describedby="guest-photo-count">
+            <img src="./photos/guest-twin-lg.webp" srcset="./photos/guest-twin-sm.webp 630w, ./photos/guest-twin-lg.webp 960w" sizes="(max-width: 720px) 100vw, (max-width: 1560px) 36vw, 552px" width="960" height="1280" loading="lazy" decoding="async" alt="" draggable="false">
+            <span class="home-expand" aria-hidden="true">
+              <svg viewBox="0 0 20 20" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 8V4h4m4 0h4v4m0 4v4h-4m-4 0H4v-4"/></svg>
+            </span>
+          </button>
+          <div class="home-film" role="group" aria-label="Фотографии внутри гостевого дома">
+            <p class="home-film-note" aria-live="polite" aria-atomic="true">
+              <span data-film-name>Спальня с двумя кроватями</span>
+              <span id="guest-photo-count" data-film-count>1 из 6</span>
+            </p>
+            <div class="home-film-controls" hidden>
+              <button type="button" class="home-arrow" data-film-previous aria-label="Предыдущее фото внутри гостевого дома">
+                <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M16 10H4m5-5-5 5 5 5"/></svg>
+              </button>
+              <button type="button" class="home-arrow" data-film-next aria-label="Следующее фото внутри гостевого дома">
+                <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 10h12m-5-5 5 5-5 5"/></svg>
+              </button>
             </div>
-            <a class="site-button home-button" href="#planner" data-select="guest" aria-label="Выбрать даты для гостевого дома">Выбрать даты <svg viewBox="0 0 20 20" width="19" height="19" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 10h12m-5-5 5 5-5 5"/></svg></a>
+          </div>
+          <div class="home-actions">
+            <a class="site-button home-button" href="#planner" data-select="guest" aria-label="Выбрать даты для гостевого дома">Выбрать даты <svg viewBox="0 0 20 20" width="17" height="17" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 10h12m-5-5 5 5-5 5"/></svg></a>
             <details class="home-amenities">
-              <summary>Что есть в доме</summary>
-              <p>Кухня с плитой, холодильником, СВЧ, чайником и посудой. Wi‑Fi, телевизор, стиральная машина и санузел на каждом этаже.</p>
+              <summary>Детали и цены</summary>
+              <div class="home-details">
+                <dl class="home-facts">
+                  <div><dt>Спальные места</dt><dd>6 основных мест и 2 дополнительных. Наверху две спальни по две односпальные кровати. В одной из комнат кровати можно сдвинуть. Внизу двухъярусная кровать в спальне и раскладной диван в гостиной.</dd></div>
+                  <div><dt>Удобства</dt><dd>Кухня с плитой, холодильником, СВЧ, чайником и посудой. Wi‑Fi, телевизор, стиральная машина и санузел на каждом этаже.</dd></div>
+                </dl>
+                <div class="home-rates">
+                  <p id="guest-rates">Стоимость за ночь</p>
+                  <dl aria-labelledby="guest-rates">
+                    <div><dt>Пн–Чт</dt><dd data-rate="weekday">14 000 ₽</dd></div>
+                    <div><dt>Пт–Вс</dt><dd data-rate="weekend">16 000 ₽</dd></div>
+                    <div><dt>Праздники</dt><dd data-rate="holiday">18 000 ₽</dd></div>
+                  </dl>
+                </div>
+              </div>
             </details>
           </div>
         </article>
-        <article class="home-card" data-home="family" aria-labelledby="family-title">
-          <div class="home-visual">
-            <button type="button" class="home-gallery" aria-label="Все фото семейного корпуса">
-              <img loading="lazy" decoding="async" alt="">
-              <span class="gallery-label"><svg viewBox="0 0 20 20" width="19" height="19" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="14" height="14" rx="1.5"/><path d="m3 14 5-5 3 3 2-2 4 4"/><circle cx="13" cy="7" r="1"/></svg> <span>Все фото</span></span>
-            </button>
-            <button type="button" class="home-bedroom" aria-label="Фотография спальных мест">
-              <img loading="lazy" decoding="async" alt="">
-              <span>Внутри дома <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 12l8-8m-6 0h6v6"/></svg></span>
-            </button>
-          </div>
-          <div class="home-body">
+        <article class="home-card" id="family-house" data-home="family" aria-labelledby="family-title">
+          <button type="button" class="home-gallery" aria-label="Семейный корпус с отдельными входами. Открыть все фотографии" aria-haspopup="dialog">
+            <img src="./photos/family-exterior-lg.webp" srcset="./photos/family-exterior-sm.webp 840w, ./photos/family-exterior-lg.webp 1152w" sizes="(max-width: 720px) 100vw, (max-width: 1560px) 54vw, 826px" width="1152" height="864" loading="lazy" decoding="async" alt="" draggable="false">
+            <span class="home-expand" aria-hidden="true">
+              <svg viewBox="0 0 20 20" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 8V4h4m4 0h4v4m0 4v4h-4m-4 0H4v-4"/></svg>
+            </span>
+          </button>
+          <div class="home-intro">
             <h3 id="family-title">Семейный корпус</h3>
-            <p class="home-capacity">2 основных места + 2 дополнительных</p>
-            <dl class="home-facts">
-              <div><dt>Спальные места</dt><dd>Две односпальные кровати на втором ярусе и раскладной диван в кухне-гостиной.</dd></div>
-            </dl>
-            <div class="home-rates">
-              <p id="family-rates">Стоимость за ночь</p>
-              <dl aria-labelledby="family-rates">
-                <div><dt>Пн–Чт</dt><dd data-rate="weekday"></dd></div>
-                <div><dt>Пт–Вс</dt><dd data-rate="weekend"></dd></div>
-                <div><dt>Праздники</dt><dd data-rate="holiday"></dd></div>
-              </dl>
+            <p class="home-meta"><span><span aria-hidden="true">2 места + 2 доп.</span><span class="home-capacity-full">2 основных места и 2 дополнительных</span></span> <span>от <b data-rate="weekday">8 000 ₽</b> за ночь</span></p>
+          </div>
+          <button type="button" class="home-bedroom" aria-label="Спальня на втором ярусе. Увеличить фото" aria-haspopup="dialog" aria-describedby="family-photo-count">
+            <img src="./photos/family-beds-lg.webp" srcset="./photos/family-beds-sm.webp 840w, ./photos/family-beds-lg.webp 1152w" sizes="(max-width: 720px) 100vw, (max-width: 1560px) 36vw, 552px" width="1152" height="864" loading="lazy" decoding="async" alt="" draggable="false">
+            <span class="home-expand" aria-hidden="true">
+              <svg viewBox="0 0 20 20" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 8V4h4m4 0h4v4m0 4v4h-4m-4 0H4v-4"/></svg>
+            </span>
+          </button>
+          <div class="home-film" role="group" aria-label="Фотографии внутри семейного корпуса">
+            <p class="home-film-note" aria-live="polite" aria-atomic="true">
+              <span data-film-name>Спальня на втором ярусе</span>
+              <span id="family-photo-count" data-film-count>1 из 5</span>
+            </p>
+            <div class="home-film-controls" hidden>
+              <button type="button" class="home-arrow" data-film-previous aria-label="Предыдущее фото внутри семейного корпуса">
+                <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M16 10H4m5-5-5 5 5 5"/></svg>
+              </button>
+              <button type="button" class="home-arrow" data-film-next aria-label="Следующее фото внутри семейного корпуса">
+                <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 10h12m-5-5 5 5-5 5"/></svg>
+              </button>
             </div>
-            <a class="site-button home-button" href="#planner" data-select="family" aria-label="Выбрать даты для семейного корпуса">Выбрать даты <svg viewBox="0 0 20 20" width="19" height="19" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 10h12m-5-5 5 5-5 5"/></svg></a>
+          </div>
+          <div class="home-actions">
+            <a class="site-button home-button" href="#planner" data-select="family" aria-label="Выбрать даты для семейного корпуса">Выбрать даты <svg viewBox="0 0 20 20" width="17" height="17" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 10h12m-5-5 5 5-5 5"/></svg></a>
             <details class="home-amenities">
-              <summary>Что есть в доме</summary>
-              <p>Отдельный вход, кухня с плитой, холодильником, СВЧ, чайником и посудой, Wi‑Fi, телевизор и санузел.</p>
+              <summary>Детали и цены</summary>
+              <div class="home-details">
+                <dl class="home-facts">
+                  <div><dt>Спальные места</dt><dd>2 основных места и 2 дополнительных. Две односпальные кровати на втором ярусе и раскладной диван в кухне-гостиной.</dd></div>
+                  <div><dt>Удобства</dt><dd>Отдельный вход, кухня с плитой, холодильником, СВЧ, чайником и посудой, Wi‑Fi, телевизор и санузел.</dd></div>
+                </dl>
+                <div class="home-rates">
+                  <p id="family-rates">Стоимость за ночь</p>
+                  <dl aria-labelledby="family-rates">
+                    <div><dt>Пн–Чт</dt><dd data-rate="weekday">8 000 ₽</dd></div>
+                    <div><dt>Пт–Вс</dt><dd data-rate="weekend">9 000 ₽</dd></div>
+                    <div><dt>Праздники</dt><dd data-rate="holiday">11 000 ₽</dd></div>
+                  </dl>
+                </div>
+              </div>
             </details>
           </div>
         </article>
@@ -145,7 +191,7 @@
       </button>
     </div>
     <figure class="photo-dialog-figure">
-      <div class="photo-stage"><img alt=""></div>
+      <div class="photo-stage"><img alt="" draggable="false"></div>
       <figcaption aria-live="polite" aria-atomic="true"></figcaption>
     </figure>
     <div class="photo-controls" aria-label="Листание фотографий">

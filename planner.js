@@ -17,22 +17,10 @@ const rates = [
 
 planner.setAttribute('aria-labelledby', 'planner-title');
 planner.innerHTML = `
-  <div class="site-shell trip">
-    <h2 id="planner-title">Спланируйте поездку</h2>
-    <div class="trip-columns">
-      <div class="trip-fields">
-        <fieldset class="trip-houses">
-          <legend>Где остановитесь</legend>
-          <div class="trip-house-options">
-            ${Object.entries(houses).map(([key, house], index) => `
-              <label class="trip-house">
-                <input type="radio" name="trip-house" value="${key}" ${index === 0 ? 'checked' : ''}>
-                <span><strong>${house.name}</strong><small>До ${house.max} гостей</small></span>
-              </label>
-            `).join('')}
-          </div>
-        </fieldset>
-
+  <div class="trip">
+    <div class="site-shell trip-fields">
+      <h2 id="planner-title">Спланируйте поездку</h2>
+      <div class="trip-date-group">
         <div class="trip-dates">
           <label for="trip-arrival">Заезд
             <input id="trip-arrival" type="date" aria-describedby="trip-date-error">
@@ -43,45 +31,68 @@ planner.innerHTML = `
         </div>
         <p class="trip-error" id="trip-date-error" hidden></p>
         <button class="trip-weekend" type="button" id="trip-weekend">Ближайшие выходные</button>
-
-        <div class="trip-party">
-          <label for="trip-guests">Гости</label>
-          <div class="trip-stepper">
-            <button type="button" id="trip-fewer" aria-label="Уменьшить число гостей">−</button>
-            <input id="trip-guests" type="number" min="1" step="1" value="2" inputmode="numeric"
-              aria-describedby="trip-guest-hint trip-guest-error">
-            <button type="button" id="trip-more" aria-label="Увеличить число гостей">+</button>
-          </div>
-          <p class="trip-hint" id="trip-guest-hint"></p>
-          <p class="trip-error" id="trip-guest-error" hidden></p>
-          <button class="trip-correct" type="button" id="trip-correct" hidden></button>
-        </div>
-
-        <div class="trip-sauna">
-          <div class="trip-sauna-image">
-            <img src="${media.shore.small}" alt="${media.shore.alt}" loading="lazy" decoding="async">
-          </div>
-          <div class="trip-sauna-controls">
-            <label class="trip-check"><input id="trip-sauna" type="checkbox" aria-describedby="trip-sauna-hint"> Уточнить про баню</label>
-            <p class="trip-hint" id="trip-sauna-hint">Стоимость и время подтвердит администратор.</p>
-            <div id="trip-sauna-date-field" hidden>
-              <label for="trip-sauna-date">На какой день
-                <input id="trip-sauna-date" type="date" aria-describedby="trip-sauna-error">
-              </label>
-              <p class="trip-error" id="trip-sauna-error" hidden></p>
-            </div>
-          </div>
-        </div>
       </div>
 
-      <div class="trip-result">
+      <fieldset class="trip-houses">
+        <legend>Где остановитесь</legend>
+        <div class="trip-house-options">
+          ${Object.entries(houses).map(([key, house], index) => `
+            <label class="trip-house">
+              <input type="radio" name="trip-house" value="${key}" ${index === 0 ? 'checked' : ''}>
+              <span><strong>${house.name}</strong><small>До ${house.max} гостей</small></span>
+            </label>
+          `).join('')}
+        </div>
+      </fieldset>
+
+      <div class="trip-party">
+        <div>
+          <label for="trip-guests">Гости</label>
+          <p class="trip-hint" id="trip-guest-hint"></p>
+        </div>
+        <div class="trip-stepper">
+          <button type="button" id="trip-fewer" aria-label="Уменьшить число гостей">−</button>
+          <input id="trip-guests" type="number" min="1" step="1" value="2" inputmode="numeric"
+            aria-describedby="trip-guest-hint trip-guest-error">
+          <button type="button" id="trip-more" aria-label="Увеличить число гостей">+</button>
+        </div>
+        <p class="trip-error" id="trip-guest-error" hidden></p>
+        <button class="trip-correct" type="button" id="trip-correct" hidden></button>
+      </div>
+    </div>
+
+    <section class="trip-sauna" aria-labelledby="trip-sauna-title">
+      <div class="trip-sauna-scene">
+        <img class="trip-sauna-image" src="${media.shore.small}"
+          srcset="${media.shore.small} 840w, ${media.shore.src} 1680w" sizes="100vw"
+          width="1680" height="1120" alt="${media.shore.alt}" loading="lazy" decoding="async">
+        <div class="site-shell trip-sauna-caption">
+          <h3 id="trip-sauna-title">Баня у Ладоги</h3>
+        </div>
+      </div>
+      <div class="site-shell trip-sauna-controls">
+        <label class="trip-check">
+          <input id="trip-sauna" type="checkbox" aria-labelledby="trip-sauna-option" aria-describedby="trip-sauna-hint">
+          <span>
+            <span id="trip-sauna-option">Уточнить про баню</span>
+            <span class="trip-hint" id="trip-sauna-hint">Стоимость и время подтвердит администратор.</span>
+          </span>
+        </label>
+        <div id="trip-sauna-date-field" hidden>
+          <label for="trip-sauna-date">На какой день
+            <input id="trip-sauna-date" type="date" aria-describedby="trip-sauna-error">
+          </label>
+          <p class="trip-error" id="trip-sauna-error" hidden></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="site-shell trip-result" aria-label="Расчёт поездки">
+      <div class="trip-estimate">
         <h3 id="trip-result-house"></h3>
         <div class="trip-result-meta">
           <p id="trip-result-dates"></p>
           <p id="trip-result-guests"></p>
-        </div>
-        <div class="trip-tariffs" id="trip-tariffs" hidden>
-          <ul id="trip-rates" aria-label="Применённые тарифы"></ul>
         </div>
         <p class="trip-total-label">Предварительно за проживание</p>
         <p class="trip-total" id="trip-total"></p>
@@ -89,23 +100,27 @@ planner.innerHTML = `
         <p class="trip-hint" id="trip-sauna-summary" hidden></p>
         <p class="trip-hint" id="trip-holiday"></p>
         <p class="trip-hint">Администратор подтвердит наличие мест и итоговую стоимость.</p>
-
-        <div class="trip-result-footer">
-          <button class="trip-copy" id="trip-copy" type="button" disabled>Скопировать запрос
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" focusable="false">
-              <rect x="8" y="8" width="12" height="12" rx="2"/><path d="M15 5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2"/>
-            </svg>
-          </button>
-          <details class="trip-manual" id="trip-manual" hidden>
-            <summary>Текст запроса для ручного копирования</summary>
-            <textarea id="trip-request" aria-label="Текст запроса" readonly rows="8"></textarea>
-          </details>
-          <p class="trip-status" id="trip-copy-status" role="status"></p>
-          <p class="trip-hint trip-demo">Запрос останется у вас</p>
-        </div>
-        <p class="trip-sr-only" id="trip-live" role="status"></p>
+        <details class="trip-tariffs" id="trip-tariffs" hidden>
+          <summary>Применённые тарифы</summary>
+          <ul id="trip-rates" aria-label="Применённые тарифы"></ul>
+        </details>
       </div>
-    </div>
+
+      <div class="trip-result-footer">
+        <button class="trip-copy" id="trip-copy" type="button" aria-describedby="trip-copy-privacy" disabled>Скопировать запрос
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" focusable="false">
+            <rect x="8" y="8" width="12" height="12" rx="2"/><path d="M15 5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2"/>
+          </svg>
+        </button>
+        <p class="trip-status" id="trip-copy-status" role="status"></p>
+        <p class="trip-hint trip-demo" id="trip-copy-privacy">Запрос останется у вас</p>
+        <details class="trip-manual" id="trip-manual" hidden>
+          <summary>Текст запроса для ручного копирования</summary>
+          <textarea id="trip-request" aria-label="Текст запроса" readonly rows="8"></textarea>
+        </details>
+      </div>
+      <p class="trip-sr-only" id="trip-live" role="status"></p>
+    </section>
   </div>
 `;
 
@@ -119,6 +134,7 @@ const correct = get('correct');
 const sauna = get('sauna');
 const saunaDate = get('sauna-date');
 const copy = get('copy');
+const tariffs = get('tariffs');
 const manual = get('manual');
 const request = get('request');
 const copyStatus = get('copy-status');
@@ -284,7 +300,7 @@ function render() {
   more.disabled = validCount && count >= house.max;
   correct.hidden = !tooMany;
   correct.textContent = `Указать ${house.max}`;
-  get('guest-hint').textContent = `В тарифе до ${house.base} гостей · всего до ${house.max}`;
+  get('guest-hint').textContent = `В тарифе до ${house.base} · всего до ${house.max}`;
   showNote('guest-error', guestError);
 
   const lines = range.valid && enoughSpace ? calculate(house, range.start, range.end) : [];
@@ -305,7 +321,8 @@ function render() {
     : 'Выберите даты заезда и выезда';
   get('result-guests').textContent = [nightText, validCount ? guestsLabel(count) : 'Укажите число гостей']
     .filter(Boolean).join(' · ');
-  get('tariffs').hidden = !lines.length;
+  tariffs.hidden = !lines.length;
+  if (tariffs.hidden) tariffs.open = false;
   get('rates').replaceChildren(...lines.map(({ text }) => {
     const item = document.createElement('li');
     item.textContent = text;
@@ -315,11 +332,11 @@ function render() {
   showNote('extra', extraText);
   showNote('sauna-summary', saunaText);
   showNote('holiday', holidayText);
-  get('live').textContent = [
+  updateTicketText('live', [
     house.name, range.valid ? nightText : get('date-error').textContent,
     guestError, total ? `Предварительная стоимость ${money(total)}.` : '',
     sauna.checked ? saunaText || get('sauna-error').textContent : '',
-  ].filter(Boolean).join(' ');
+  ].filter(Boolean).join(' '));
 
   const canRequest = Boolean(lines.length && (!sauna.checked || saunaDay));
   copy.disabled = !canRequest;
@@ -353,6 +370,8 @@ function chooseHouse(key) {
   if (!input) return;
   input.checked = true;
   render();
+  // Let the link reach #planner before moving keyboard focus to the first field.
+  requestAnimationFrame(() => arrival.focus({ preventScroll: true }));
 }
 
 planner.addEventListener('input', (event) => {
