@@ -143,9 +143,8 @@ for (const card of document.querySelectorAll('[data-home]')) {
   if (cover.small) {
     const originalWidth = house === 'guest' ? 1680 : 1152;
     coverImage.srcset = `${cover.small} 840w, ${cover.src} ${originalWidth}w`;
-    coverImage.sizes = '(max-width: 700px) calc(100vw - 36px), (max-width: 1376px) 45vw, 616px';
+    coverImage.sizes = '(max-width: 385px) calc(100vw - 40px), (max-width: 850px) 90vw, (max-width: 1560px) 53vw, 820px';
   }
-  galleryButton.querySelector('.gallery-label span').textContent = `Все фото (${media[house].length})`;
   galleryButton.addEventListener('click', () => openGallery(house, galleryButton));
   const bedroomButton = card.querySelector('.home-bedroom');
   const bedroom = media[house][1];

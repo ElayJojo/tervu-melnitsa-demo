@@ -5,7 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Дома для отдыха на Ладожском озере в посёлке Терву. Фотографии, спальные места и расчёт поездки.">
   <title>Хутор Мельница — отдых на Ладоге</title>
-  <link rel="preload" href="./fonts/oswald-cyr.woff2" as="font" type="font/woff2" crossorigin>
+  <meta name="theme-color" content="#242d27">
+  <link rel="preload" href="./photos/dusk-flat-phone.webp" as="image" type="image/webp" media="(max-width: 700px)" fetchpriority="high">
+  <link rel="preload" href="./photos/dusk-flat-wide.webp" as="image" type="image/webp" media="(width > 700px)" fetchpriority="high">
+  <link rel="preload" href="./fonts/cormorant-cyr.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="./design.css">
   <link rel="stylesheet" href="./planner.css">
   <script type="module" src="./gallery.js"></script>
@@ -16,7 +19,7 @@
   <header class="site-header">
     <div class="site-shell header-content">
       <a class="wordmark" href="#top">
-        <svg viewBox="0 0 48 48" width="42" height="42" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg viewBox="0 0 48 48" width="30" height="30" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <path d="M17 38l3-15m11 15-3-15M8 39h32M14 43h20M23.8 19.8 13 9l4-4 8 11m1.3 4.8L37 10l4 4-11 8m-4.7 1.3L36 34l-4 4-8-11m-1.4-4.7L12 33l-4-4 11-8"/>
           <circle cx="24" cy="22" r="2.6"/>
         </svg>
@@ -28,50 +31,34 @@
       </nav>
     </div>
   </header>
-  <main id="main">
+  <main id="main" tabindex="-1">
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero-scene">
         <picture class="hero-picture">
-          <source media="(max-width: 620px)" srcset="./photos/poster-all-phone.webp">
-          <img id="hero-image" src="./photos/poster-all-wide.webp" fetchpriority="high" decoding="async" alt="Дома хутора среди сосен над бухтой Терву">
+          <source media="(max-width: 700px)" srcset="./photos/dusk-flat-phone.webp" width="840" height="1050">
+          <img id="hero-image" src="./photos/dusk-flat-wide.webp" width="1680" height="791" fetchpriority="high" decoding="async" alt="Дома хутора среди сосен над бухтой Терву">
         </picture>
-        <div class="hero-plane" data-plane="back" aria-hidden="true"></div>
-        <div class="hero-plane" data-plane="mid" aria-hidden="true"></div>
-        <div class="hero-masthead">
-          <h1 id="hero-title"><em>Хутор</em><span>Мельница</span></h1>
-          <svg class="hero-bearing" viewBox="0 0 86 86" aria-hidden="true" fill="none">
-            <circle cx="43" cy="43" r="17" fill="currentColor"/>
-            <path d="M12 43a31 31 0 0 1 31-31m0 62a31 31 0 0 0 31-31M20 23l5 5m33 30 5 5M12 43h6m50 0h6M43 12v6m0 50v6" stroke="currentColor" stroke-width="1.15"/>
-            <path d="M29 57 57 29" stroke="#f5e9cc" stroke-width="1"/>
-          </svg>
+        <div class="hero-depth" aria-hidden="true">
+          <div class="hero-plane" data-plane="back"></div>
+          <div class="hero-plane" data-plane="front"></div>
         </div>
-        <div class="hero-plane hero-edge" aria-hidden="true"></div>
-        <div class="hero-plane" data-plane="front" aria-hidden="true"></div>
       </div>
-      <div class="hero-bottom">
-        <div class="site-shell hero-content">
-          <div class="hero-text">
-            <p class="hero-location">Терву, Карелия</p>
-            <p class="hero-description">Дома на берегу Ладожского озера</p>
-          </div>
+      <div class="site-shell hero-content">
+        <div class="hero-masthead">
+          <h1 id="hero-title"><em>Хутор</em> <span>Мельница</span></h1>
+          <p class="hero-description">Дома на берегу Ладожского озера</p>
+        </div>
+        <div class="hero-bottom">
           <a class="site-button hero-button" href="#houses">Выбрать дом <svg viewBox="0 0 20 20" width="19" height="19" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M10 3.5v12m-5-5 5 5 5-5"/></svg></a>
-          <a class="hero-compass" href="https://yandex.ru/maps/?ll=30.125982%2C61.311330&amp;z=14&amp;pt=30.125982%2C61.311330" aria-label="Посмотреть расположение хутора на карте">
-            <svg viewBox="0 0 54 54" width="54" height="54" aria-hidden="true" fill="none" stroke="currentColor">
-              <circle cx="27" cy="27" r="20" stroke-dasharray="1 4.23" stroke-width="1.3"/>
-              <path d="M27 3v6m0 36v6M3 27h6m36 0h6" stroke-width=".8"/>
-              <g class="compass-needle"><path d="M27 12l5 15-5 15-5-15Z"/><path d="M27 12l5 15h-10Z" fill="currentColor"/></g>
-            </svg>
-            <span>61°18′41″ с. ш.<br>30°07′34″ в. д.</span>
+          <a class="hero-location" href="https://yandex.ru/maps/?ll=30.125982%2C61.311330&amp;z=14&amp;pt=30.125982%2C61.311330" aria-label="Терву, Карелия — посмотреть на карте">
+            Терву, Карелия <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 12l8-8m-6 0h6v6"/></svg>
           </a>
         </div>
       </div>
     </section>
 
     <section class="site-shell homes" id="houses" aria-labelledby="houses-title">
-      <div class="homes-heading">
-        <h2 id="houses-title">Дома на хуторе</h2>
-        <p class="homes-intro">Выберите дом по числу гостей, спальным местам и виду изнутри.</p>
-      </div>
+      <h2 id="houses-title">Дома на хуторе</h2>
       <div class="home-grid">
         <article class="home-card" data-home="guest" aria-labelledby="guest-title">
           <div class="home-visual">
@@ -81,12 +68,12 @@
             </button>
             <button type="button" class="home-bedroom" aria-label="Фотография спальных мест">
               <img loading="lazy" decoding="async" alt="">
-              <span>Внутри дома <span aria-hidden="true">↗</span></span>
+              <span>Внутри дома <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 12l8-8m-6 0h6v6"/></svg></span>
             </button>
           </div>
           <div class="home-body">
-            <p class="home-capacity">6 основных мест + 2 дополнительных</p>
             <h3 id="guest-title">Гостевой дом</h3>
+            <p class="home-capacity">6 основных мест + 2 дополнительных</p>
             <dl class="home-facts">
               <div><dt>Спальные места</dt><dd>Наверху две спальни по две односпальные кровати. В одной из комнат кровати можно сдвинуть. Внизу двухъярусная кровать в спальне и раскладной диван в гостиной.</dd></div>
             </dl>
@@ -98,7 +85,7 @@
                 <div><dt>Праздники</dt><dd data-rate="holiday"></dd></div>
               </dl>
             </div>
-            <a class="site-button home-button" href="#planner" data-select="guest" aria-label="Выбрать даты для гостевого дома">Выбрать даты <span aria-hidden="true">→</span></a>
+            <a class="site-button home-button" href="#planner" data-select="guest" aria-label="Выбрать даты для гостевого дома">Выбрать даты <svg viewBox="0 0 20 20" width="19" height="19" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 10h12m-5-5 5 5-5 5"/></svg></a>
             <details class="home-amenities">
               <summary>Что есть в доме</summary>
               <p>Кухня с плитой, холодильником, СВЧ, чайником и посудой. Wi‑Fi, телевизор, стиральная машина и санузел на каждом этаже.</p>
@@ -113,12 +100,12 @@
             </button>
             <button type="button" class="home-bedroom" aria-label="Фотография спальных мест">
               <img loading="lazy" decoding="async" alt="">
-              <span>Внутри дома <span aria-hidden="true">↗</span></span>
+              <span>Внутри дома <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 12l8-8m-6 0h6v6"/></svg></span>
             </button>
           </div>
           <div class="home-body">
-            <p class="home-capacity">2 основных места + 2 дополнительных</p>
             <h3 id="family-title">Семейный корпус</h3>
+            <p class="home-capacity">2 основных места + 2 дополнительных</p>
             <dl class="home-facts">
               <div><dt>Спальные места</dt><dd>Две односпальные кровати на втором ярусе и раскладной диван в кухне-гостиной.</dd></div>
             </dl>
@@ -130,7 +117,7 @@
                 <div><dt>Праздники</dt><dd data-rate="holiday"></dd></div>
               </dl>
             </div>
-            <a class="site-button home-button" href="#planner" data-select="family" aria-label="Выбрать даты для семейного корпуса">Выбрать даты <span aria-hidden="true">→</span></a>
+            <a class="site-button home-button" href="#planner" data-select="family" aria-label="Выбрать даты для семейного корпуса">Выбрать даты <svg viewBox="0 0 20 20" width="19" height="19" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 10h12m-5-5 5 5-5 5"/></svg></a>
             <details class="home-amenities">
               <summary>Что есть в доме</summary>
               <p>Отдельный вход, кухня с плитой, холодильником, СВЧ, чайником и посудой, Wi‑Fi, телевизор и санузел.</p>

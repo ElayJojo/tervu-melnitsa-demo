@@ -18,7 +18,7 @@ const rates = [
 planner.setAttribute('aria-labelledby', 'planner-title');
 planner.innerHTML = `
   <div class="site-shell trip">
-    <h2 id="planner-title">Спланируйте <em>поездку</em></h2>
+    <h2 id="planner-title">Спланируйте поездку</h2>
     <div class="trip-columns">
       <div class="trip-fields">
         <fieldset class="trip-houses">
@@ -59,7 +59,7 @@ planner.innerHTML = `
 
         <div class="trip-sauna">
           <div class="trip-sauna-image">
-            <img src="${media.shore.small}" alt="${media.shore.alt}" width="320" height="192" loading="lazy" decoding="async">
+            <img src="${media.shore.small}" alt="${media.shore.alt}" loading="lazy" decoding="async">
           </div>
           <div class="trip-sauna-controls">
             <label class="trip-check"><input id="trip-sauna" type="checkbox" aria-describedby="trip-sauna-hint"> Уточнить про баню</label>
@@ -75,15 +75,7 @@ planner.innerHTML = `
       </div>
 
       <div class="trip-result">
-        <div class="trip-result-title">
-          <div><h3 id="trip-result-house"></h3><p class="trip-result-place">Хутор Мельница · Терву</p></div>
-          <svg class="trip-stamp" viewBox="0 0 64 64" width="64" height="64" aria-hidden="true" fill="none" stroke="currentColor">
-            <circle cx="32" cy="32" r="28" stroke-width="1.3" stroke-dasharray="1 3"/>
-            <circle cx="32" cy="32" r="22" stroke-width=".8"/>
-            <path d="M32 12v7m0 26v7M12 32h7m26 0h7m-20-16 4.5 11.5L48 32l-11.5 4.5L32 48l-4.5-11.5L16 32l11.5-4.5L32 16Z"/>
-            <path d="M32 16v16l4.5-4.5L32 16Zm16 16H32l4.5 4.5L48 32ZM32 48V32l-4.5 4.5L32 48ZM16 32h16l-4.5-4.5L16 32Z" fill="currentColor"/>
-          </svg>
-        </div>
+        <h3 id="trip-result-house"></h3>
         <div class="trip-result-meta">
           <p id="trip-result-dates"></p>
           <p id="trip-result-guests"></p>
@@ -109,7 +101,7 @@ planner.innerHTML = `
             <textarea id="trip-request" aria-label="Текст запроса" readonly rows="8"></textarea>
           </details>
           <p class="trip-status" id="trip-copy-status" role="status"></p>
-          <p class="trip-hint trip-demo">Демо · запрос остаётся у вас</p>
+          <p class="trip-hint trip-demo">Запрос останется у вас</p>
         </div>
         <p class="trip-sr-only" id="trip-live" role="status"></p>
       </div>

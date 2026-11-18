@@ -1,205 +1,178 @@
 const hero = document.querySelector('.hero');
-const fallback = hero.querySelector('#hero-image');
-const planes = [...hero.querySelectorAll('[data-plane]')];
-const edge = hero.querySelector('.hero-edge');
-const compass = hero.querySelector('.compass-needle');
-const bearing = hero.querySelector('.hero-bearing');
-const narrow = matchMedia('(max-width: 620px)');
+const flat = hero.querySelector('#hero-image');
+const phoneSource = hero.querySelector('source');
+const back = hero.querySelector('[data-plane="back"]');
+const front = hero.querySelector('[data-plane="front"]');
+const phone = matchMedia('(max-width: 700px)');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+const layersBySize = new Map();
+const fallbackSizes = new Set();
+
 let gsapLoad;
+let visible = false;
+let request = 0;
+let activeDepth;
 
 export function loadGsap() {
-  if (window.gsap) return Promise.resolve(window.gsap);
-  gsapLoad ??= new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = './vendor/gsap.min.js';
-    script.onload = () => resolve(window.gsap);
-    script.onerror = () => {
-      gsapLoad = null;
-      script.remove();
-      reject(new Error('GSAP could not be loaded'));
-    };
-    document.head.append(script);
-  });
+  if (!gsapLoad) {
+    gsapLoad = new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = './vendor/gsap.min.js';
+      script.onload = () => {
+        window.gsap.config({ autoSleep: 30 });
+        resolve(window.gsap);
+      };
+      script.onerror = reject;
+      document.head.append(script);
+    }).catch((error) => {
+      gsapLoad = undefined;
+      throw error;
+    });
+  }
   return gsapLoad;
 }
 
-async function decodeLayer(plane, size) {
+function currentSize() {
+  return phone.matches ? 'phone' : 'wide';
+}
+
+function useFallback() {
+  const size = currentSize();
+  if (fallbackSizes.has(size)) return;
+  fallbackSizes.add(size);
+  if (size === 'phone') phoneSource.srcset = './photos/tervu-bay-sm.webp';
+  else flat.src = './photos/tervu-bay-lg.webp';
+}
+
+function loadLayer(plane, size) {
   const image = new Image();
   image.alt = '';
   image.decoding = 'async';
-  image.src = `./photos/poster-${plane.dataset.plane}-${size}.webp`;
-  await image.decode();
-  return image;
+  image.fetchPriority = 'low';
+  image.src = `./photos/dusk-${plane}-${size}.webp`;
+  return image.decode().then(() => image);
 }
 
-function initMotion(gsap) {
-  const [back, mid, front] = planes;
-  const motionLayers = [
-    { targets: back, travel: 47, pointerDepth: 3 },
-    { targets: [mid, edge], travel: 35, pointerDepth: 9 },
-    { targets: front, travel: 22, pointerDepth: 19 },
-  ];
-  const animatedLayers = motionLayers.map(({ targets, travel, pointerDepth }) => ({
-    travel,
-    pointerDepth,
-    x: gsap.quickTo(targets, 'x', { duration: .6, ease: 'power3.out' }),
-    y: gsap.quickTo(targets, 'y', { duration: .5, ease: 'power3.out' }),
-  }));
-  const rotateCompass = gsap.quickTo(compass, 'rotation', { duration: .6, ease: 'power3.out' });
-  const rotateBearing = gsap.quickTo(bearing, 'rotation', { duration: .6, ease: 'power3.out' });
-  let visible = true;
-  let loaded = false;
-  let pending = 0;
-  let scrollOrigin = 0;
-  let sceneHeight = 0;
-  let pointer = 0;
-  let request = 0;
-  let currentSize = '';
+function loadLayers(size) {
+  if (!layersBySize.has(size)) {
+    layersBySize.set(size, Promise.all([loadLayer('back', size), loadLayer('front', size)]).catch((error) => {
+      layersBySize.delete(size);
+      throw error;
+    }));
+  }
+  return layersBySize.get(size);
+}
 
-  function measure() {
-    const bounds = hero.getBoundingClientRect();
-    scrollOrigin = window.scrollY + bounds.top;
-    sceneHeight = bounds.height;
+function enableDepth(gsap, [backImage, frontImage]) {
+  back.replaceChildren(backImage);
+  front.replaceChildren(frontImage);
+
+  // Both planes use the flat photo's crop. Zoom from the bottom edge
+  // to cover the rear plane's downward travel without a visible edge.
+  const position = { progress: 0 };
+  const move = gsap.quickTo(position, 'progress', {
+    duration: .38,
+    ease: 'power2.out',
+    onUpdate: draw,
+  });
+  let frame = 0;
+  let height = 1;
+  let top = 0;
+  let lastProgress;
+  let showingDepth = false;
+
+  function draw() {
+    const { progress } = position;
+    const rearTravel = Math.min(66, height * .073);
+    const scale = 1 + (rearTravel + 2) / height * progress;
+    const offset = rearTravel * progress;
+    back.style.transform = `translate3d(0, ${offset}px, 0) scale(${scale})`;
+    front.style.transform = `translate3d(0, ${offset * .16}px, 0) scale(${scale})`;
+    if (showingDepth !== (progress > .004)) {
+      showingDepth = progress > .004;
+      hero.classList.toggle('hero-in-motion', showingDepth);
+    }
   }
 
   function update() {
-    pending = 0;
-    if (!visible || !loaded || reduced.matches) return;
-    const progress = gsap.utils.clamp(0, 1, (window.scrollY - scrollOrigin) / sceneHeight);
-    const range = narrow.matches ? .72 : 1;
-    for (const layer of animatedLayers) {
-      layer.x(pointer * layer.pointerDepth);
-      layer.y(progress * layer.travel * range);
-    }
-    rotateCompass(18 + pointer * 24 - progress * 40);
-    rotateBearing(pointer * 12 - progress * 64);
+    frame = 0;
+    const progress = Math.min(1, Math.max(0, (window.scrollY - top) / (height * .66)));
+    if (progress === lastProgress) return;
+    lastProgress = progress;
+    move(progress);
   }
 
   function schedule() {
-    if (visible && loaded && !reduced.matches && !pending) {
-      pending = requestAnimationFrame(update);
-    }
+    if (!frame) frame = requestAnimationFrame(update);
   }
 
-  async function swapLayers() {
-    if (reduced.matches) return;
-    const id = ++request;
-    const size = narrow.matches ? 'phone' : 'wide';
-    if (currentSize === size) {
-      hero.classList.add('hero-ready');
-      resize();
-      return;
-    }
-    try {
-      const images = await Promise.all(planes.map((plane) => decodeLayer(plane, size)));
-      if (id !== request || reduced.matches) return;
-      for (const [index, plane] of planes.entries()) plane.replaceChildren(images[index]);
-      if (size === 'wide') edge.replaceChildren(images[1].cloneNode());
-      else edge.replaceChildren();
-      loaded = true;
-      currentSize = size;
-      hero.classList.add('hero-ready');
-      resize();
-    } catch {
-      if (!loaded) hero.classList.remove('hero-ready');
-    }
-  }
-
-  function resize() {
-    measure();
-    if (reduced.matches) {
-      hero.classList.remove('hero-ready');
-      for (const layer of animatedLayers) {
-        layer.x.tween.pause();
-        layer.y.tween.pause();
-      }
-      rotateCompass.tween.pause();
-      rotateBearing.tween.pause();
-      gsap.set([...planes, edge], { clearProps: 'transform' });
-      gsap.set([compass, bearing], { clearProps: 'transform' });
-      return;
-    }
+  function measure() {
+    const bounds = hero.getBoundingClientRect();
+    height = Math.max(1, bounds.height);
+    top = bounds.top + window.scrollY;
+    lastProgress = undefined;
     schedule();
   }
 
-  new IntersectionObserver(([entry]) => {
-    visible = entry.isIntersecting;
-    if (visible) schedule();
-  }).observe(hero);
-
+  const resize = new ResizeObserver(measure);
+  resize.observe(hero);
   window.addEventListener('scroll', schedule, { passive: true });
-  window.addEventListener('resize', resize, { passive: true });
-  narrow.addEventListener('change', swapLayers);
-  reduced.addEventListener('change', () => {
-    if (reduced.matches) resize();
-    else swapLayers();
-  });
+  hero.classList.add('hero-ready');
+  measure();
 
-  hero.addEventListener('pointermove', (event) => {
-    if (event.pointerType !== 'mouse' || reduced.matches) return;
-    pointer = event.clientX / hero.clientWidth * 2 - 1;
-    schedule();
-  }, { passive: true });
-
-  hero.addEventListener('pointerleave', () => {
-    pointer = 0;
-    schedule();
-  });
-
-  swapLayers();
+  return () => {
+    hero.classList.remove('hero-ready', 'hero-in-motion');
+    window.removeEventListener('scroll', schedule);
+    resize.disconnect();
+    cancelAnimationFrame(frame);
+    move.tween.kill();
+    back.style.removeProperty('transform');
+    front.style.removeProperty('transform');
+    back.replaceChildren();
+    front.replaceChildren();
+  };
 }
 
-async function prepareHero() {
-  try {
-    await fallback.decode();
-    let starting = false;
-    const start = () => {
-      if (starting || reduced.matches) return;
-      starting = true;
-      reduced.removeEventListener('change', start);
-      loadGsap().then(initMotion).catch(() => {});
-    };
-    const whenVisible = new IntersectionObserver(([entry]) => {
-      if (!entry.isIntersecting) return;
-      whenVisible.disconnect();
-      reduced.addEventListener('change', start);
-      requestAnimationFrame(() => {
-        if ('requestIdleCallback' in window) {
-          window.requestIdleCallback(start, { timeout: 900 });
-        } else {
-          setTimeout(start, 90);
-        }
-      });
-    });
-    whenVisible.observe(hero);
-  } catch {
-    // The visible poster remains available if its animated replacement fails.
-  }
+function afterPaintAndIdle(callback) {
+  requestAnimationFrame(() => {
+    if ('requestIdleCallback' in window) window.requestIdleCallback(callback, { timeout: 1200 });
+    else setTimeout(callback, 140);
+  });
 }
 
-prepareHero();
-
-const bedroomObserver = new IntersectionObserver((entries) => {
-  for (const entry of entries) {
-    if (!entry.isIntersecting || entry.intersectionRatio < .45) continue;
-    bedroomObserver.unobserve(entry.target);
-    if (reduced.matches) continue;
-    loadGsap().then((gsap) => {
-      const { top, bottom } = entry.target.getBoundingClientRect();
-      if (reduced.matches || bottom < 0 || top > innerHeight) return;
-      const reverse = entry.target.closest('[data-home="family"]') && innerWidth > 780;
-      const tween = gsap.fromTo(entry.target, {
-        x: reverse ? -29 : 29, y: 31, rotation: reverse ? -5.5 : 5.5,
-      }, {
-        x: 0, y: 0, rotation: 0, duration: .65, ease: 'power3.out', clearProps: 'transform',
-      });
-      const finishIfReduced = () => {
-        if (reduced.matches) tween.progress(1);
-      };
-      reduced.addEventListener('change', finishIfReduced);
-      tween.eventCallback('onComplete', () => reduced.removeEventListener('change', finishIfReduced));
-    }).catch(() => {});
+function syncDepth() {
+  const size = currentSize();
+  const id = ++request;
+  if (activeDepth && (reduced.matches || activeDepth.size !== size)) {
+    activeDepth.dispose();
+    activeDepth = undefined;
   }
-}, { threshold: .45 });
-for (const photo of document.querySelectorAll('.home-bedroom')) bedroomObserver.observe(photo);
+  if (activeDepth || reduced.matches || !visible || fallbackSizes.has(size)) return;
+  if (!flat.complete || !flat.naturalWidth || !flat.currentSrc.endsWith(`dusk-flat-${size}.webp`)) return;
+
+  const canActivate = () => id === request && visible && !reduced.matches;
+  afterPaintAndIdle(async () => {
+    if (!canActivate()) return;
+    try {
+      await flat.decode();
+      if (!canActivate()) return;
+      const images = await loadLayers(size);
+      if (!canActivate()) return;
+      if (images.some((image) => image.naturalWidth !== flat.naturalWidth || image.naturalHeight !== flat.naturalHeight)) return;
+      const gsap = await loadGsap();
+      if (canActivate()) activeDepth = { size, dispose: enableDepth(gsap, images) };
+    } catch {
+      // A complete flat photo stays visible if the depth layers are unavailable.
+    }
+  });
+}
+
+flat.addEventListener('error', useFallback);
+flat.addEventListener('load', syncDepth);
+if (flat.complete && !flat.naturalWidth) useFallback();
+phone.addEventListener('change', syncDepth);
+reduced.addEventListener('change', syncDepth);
+new IntersectionObserver(([entry]) => {
+  visible = entry.isIntersecting;
+  syncDepth();
+}).observe(hero);
