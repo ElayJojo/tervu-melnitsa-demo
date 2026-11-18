@@ -1,5 +1,5 @@
 import { houses } from './shared.js';
-import { media } from './media.js';
+import { fragmentLink, navigateToFragment } from './scroll.js';
 
 const planner = document.querySelector('#planner');
 const currency = new Intl.NumberFormat('ru-RU', {
@@ -17,20 +17,23 @@ const rates = [
 
 planner.setAttribute('aria-labelledby', 'planner-title');
 planner.innerHTML = `
-  <div class="trip">
-    <div class="site-shell trip-fields">
+  <form class="site-shell trip" aria-labelledby="planner-title" novalidate>
+    <div class="trip-fields">
       <h2 id="planner-title">Спланируйте поездку</h2>
       <div class="trip-date-group">
         <div class="trip-dates">
-          <label for="trip-arrival">Заезд
+          <div class="trip-date-field">
+            <label for="trip-arrival">Заезд</label>
             <input id="trip-arrival" type="date" aria-describedby="trip-date-error">
-          </label>
-          <label for="trip-departure">Выезд
+          </div>
+          <div class="trip-date-field">
+            <label for="trip-departure">Выезд</label>
             <input id="trip-departure" type="date" aria-describedby="trip-date-error">
-          </label>
+            <button class="trip-weekend" type="button" id="trip-weekend"
+              aria-label="На выходные, выбрать ближайшую пятницу и воскресенье">На выходные</button>
+          </div>
         </div>
         <p class="trip-error" id="trip-date-error" hidden></p>
-        <button class="trip-weekend" type="button" id="trip-weekend">Ближайшие выходные</button>
       </div>
 
       <fieldset class="trip-houses">
@@ -59,52 +62,38 @@ planner.innerHTML = `
         <p class="trip-error" id="trip-guest-error" hidden></p>
         <button class="trip-correct" type="button" id="trip-correct" hidden></button>
       </div>
-    </div>
 
-    <section class="trip-sauna" aria-labelledby="trip-sauna-title">
-      <div class="trip-sauna-scene">
-        <img class="trip-sauna-image" src="${media.shore.small}"
-          srcset="${media.shore.small} 840w, ${media.shore.src} 1680w" sizes="100vw"
-          width="1680" height="1120" alt="${media.shore.alt}" loading="lazy" decoding="async">
-        <div class="site-shell trip-sauna-caption">
-          <h3 id="trip-sauna-title">Баня у Ладоги</h3>
-        </div>
-      </div>
-      <div class="site-shell trip-sauna-controls">
+      <div class="trip-sauna" role="group" aria-labelledby="trip-sauna-title">
+        <span class="trip-sr-only" id="trip-sauna-title">Баня у Ладоги</span>
         <label class="trip-check">
           <input id="trip-sauna" type="checkbox" aria-labelledby="trip-sauna-option" aria-describedby="trip-sauna-hint">
           <span>
             <span id="trip-sauna-option">Уточнить про баню</span>
-            <span class="trip-hint" id="trip-sauna-hint">Стоимость и время подтвердит администратор.</span>
+            <span class="trip-hint" id="trip-sauna-hint">Время и цену уточним</span>
           </span>
         </label>
         <div id="trip-sauna-date-field" hidden>
-          <label for="trip-sauna-date">На какой день
+          <label for="trip-sauna-date">День визита
             <input id="trip-sauna-date" type="date" aria-describedby="trip-sauna-error">
           </label>
-          <p class="trip-error" id="trip-sauna-error" hidden></p>
         </div>
+        <p class="trip-error" id="trip-sauna-error" hidden></p>
       </div>
-    </section>
+    </div>
 
-    <section class="site-shell trip-result" aria-label="Расчёт поездки">
-      <div class="trip-estimate">
-        <h3 id="trip-result-house"></h3>
+    <section class="trip-result" aria-label="Расчёт поездки">
+      <div class="trip-quote">
+        <div>
+          <p class="trip-total-label">За проживание</p>
+          <p class="trip-total" id="trip-total"></p>
+        </div>
         <div class="trip-result-meta">
-          <p id="trip-result-dates"></p>
+          <p class="trip-hint" id="trip-estimate-hint" hidden></p>
           <p id="trip-result-guests"></p>
         </div>
-        <p class="trip-total-label">Предварительно за проживание</p>
-        <p class="trip-total" id="trip-total"></p>
-        <p class="trip-hint" id="trip-extra" hidden></p>
-        <p class="trip-hint" id="trip-sauna-summary" hidden></p>
-        <p class="trip-hint" id="trip-holiday"></p>
-        <p class="trip-hint">Администратор подтвердит наличие мест и итоговую стоимость.</p>
-        <details class="trip-tariffs" id="trip-tariffs" hidden>
-          <summary>Применённые тарифы</summary>
-          <ul id="trip-rates" aria-label="Применённые тарифы"></ul>
-        </details>
       </div>
+      <p class="trip-hint" id="trip-extra" hidden></p>
+      <p class="trip-hint">Наличие и цену подтвердит администратор.</p>
 
       <div class="trip-result-footer">
         <button class="trip-copy" id="trip-copy" type="button" aria-describedby="trip-copy-privacy" disabled>Скопировать запрос
@@ -114,14 +103,26 @@ planner.innerHTML = `
         </button>
         <p class="trip-status" id="trip-copy-status" role="status"></p>
         <p class="trip-hint trip-demo" id="trip-copy-privacy">Запрос останется у вас</p>
+      </div>
+
+      <div class="trip-disclosures">
+        <details class="trip-tariffs" id="trip-tariffs">
+          <summary>Тарифы и условия</summary>
+          <h3 id="trip-result-house"></h3>
+          <p class="trip-hint" id="trip-result-dates"></p>
+          <ul id="trip-rates" aria-label="Применённые тарифы" hidden></ul>
+          <p class="trip-hint" id="trip-holiday" hidden></p>
+          <p class="trip-hint" id="trip-sauna-summary" hidden></p>
+        </details>
         <details class="trip-manual" id="trip-manual" hidden>
-          <summary>Текст запроса для ручного копирования</summary>
-          <textarea id="trip-request" aria-label="Текст запроса" readonly rows="8"></textarea>
+          <summary aria-label="Текст запроса для ручного копирования">Текст запроса</summary>
+          <textarea id="trip-request" aria-label="Текст запроса" readonly rows="7"></textarea>
+          <button class="trip-link" type="button" id="trip-select-request">Выделить текст</button>
         </details>
       </div>
       <p class="trip-sr-only" id="trip-live" role="status"></p>
     </section>
-  </div>
+  </form>
 `;
 
 const get = (id) => document.getElementById(`trip-${id}`);
@@ -133,8 +134,10 @@ const more = get('more');
 const correct = get('correct');
 const sauna = get('sauna');
 const saunaDate = get('sauna-date');
+const totalField = get('total');
 const copy = get('copy');
 const tariffs = get('tariffs');
+const rateList = get('rates');
 const manual = get('manual');
 const request = get('request');
 const copyStatus = get('copy-status');
@@ -315,21 +318,24 @@ function render() {
     : '';
   const saunaText = saunaDay ? `Баня · ${saunaDay.replace(/\s+г\.$/u, '')}. Стоимость и время нужно уточнить.` : '';
 
-  updateTicketText('result-house', house.name, true);
+  get('result-house').textContent = house.name;
   get('result-dates').textContent = range.valid
     ? prettyRange(range.start, range.end)
     : 'Выберите даты заезда и выезда';
+  showNote('estimate-hint', range.valid ? '' : 'Выберите даты для расчёта');
   get('result-guests').textContent = [nightText, validCount ? guestsLabel(count) : 'Укажите число гостей']
     .filter(Boolean).join(' · ');
-  tariffs.hidden = !lines.length;
+  tariffs.hidden = !lines.length && !holidayText;
   if (tariffs.hidden) tariffs.open = false;
-  get('rates').replaceChildren(...lines.map(({ text }) => {
+  rateList.hidden = !lines.length;
+  rateList.replaceChildren(...lines.map(({ text }) => {
     const item = document.createElement('li');
     item.textContent = text;
     return item;
   }));
+  totalField.toggleAttribute('data-long-total', total >= 1_000_000_000);
   updateTicketText('total', total ? money(total) : '—', Boolean(total));
-  showNote('extra', extraText);
+  showNote('extra', extraText ? `Доплата за ${placesLabel(count - house.base)} уточняется.` : '');
   showNote('sauna-summary', saunaText);
   showNote('holiday', holidayText);
   updateTicketText('live', [
@@ -365,19 +371,25 @@ function changeGuests(count) {
   render();
 }
 
-function chooseHouse(key) {
-  const input = houseInputs.find(({ value }) => value === key);
-  if (!input) return;
-  input.checked = true;
-  render();
-  // Let the link reach #planner before moving keyboard focus to the first field.
-  requestAnimationFrame(() => arrival.focus({ preventScroll: true }));
-}
-
 planner.addEventListener('input', (event) => {
   if (event.target !== request) render();
 });
-document.addEventListener('select-house', (event) => chooseHouse(event.detail));
+planner.querySelector('form').addEventListener('submit', (event) => event.preventDefault());
+document.addEventListener('click', (event) => {
+  const link = fragmentLink(event);
+  if (link?.hash !== '#planner') return;
+
+  const house = houseInputs.find(({ value }) => value === link.dataset.select);
+  const wantsSauna = link.matches(
+    '[data-request-sauna], #sauna .sauna-detail a, #sauna-visit a, #sauna-visit',
+  );
+  if (!house && !wantsSauna) return;
+
+  if (house) house.checked = true;
+  if (wantsSauna) sauna.checked = true;
+  render();
+  navigateToFragment(event, link, wantsSauna && !saunaDate.disabled ? saunaDate : arrival);
+});
 get('weekend').addEventListener('click', selectWeekend);
 fewer.addEventListener('click', () => {
   const atMinimum = guests.valueAsNumber === 2;
@@ -394,6 +406,14 @@ correct.addEventListener('click', () => {
   changeGuests(activeHouse().max);
 });
 
+function selectRequest() {
+  manual.open = true;
+  request.focus();
+  request.select();
+  copyStatus.textContent = 'Текст выделен. Скопируйте его вручную.';
+}
+
+get('select-request').addEventListener('click', selectRequest);
 copy.addEventListener('click', async () => {
   const currentText = request.value;
   if (!currentText) return;
@@ -402,10 +422,7 @@ copy.addEventListener('click', async () => {
     if (request.value === currentText) copyStatus.textContent = 'Запрос скопирован.';
   } catch {
     if (request.value !== currentText) return;
-    manual.open = true;
-    request.focus();
-    request.select();
-    copyStatus.textContent = 'Текст выделен. Скопируйте его вручную.';
+    selectRequest();
   }
 });
 
