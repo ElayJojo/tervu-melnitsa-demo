@@ -264,18 +264,20 @@ a { color: inherit; text-underline-offset: .24em; }
 }
 
 .homes-nav a:hover { color: var(--ink); text-decoration-color: currentColor; }
-.home-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(24px, 3.6vw, 58px);
+.home-card {
+  --photo-gap: clamp(18px, 3.6vw, 54px);
+  min-width: 0;
+  padding-top: clamp(19px, 2.7vw, 38px);
+  border-top: 1px solid var(--rule);
+  scroll-margin-top: 18px;
 }
 
-.home-card { min-width: 0; scroll-margin-top: 18px; }
+.home-card + .home-card { margin-top: clamp(54px, 7.8vw, 112px); }
 
-.home-intro { margin-bottom: clamp(13px, 1.4vw, 22px); }
+.home-intro { margin-bottom: clamp(18px, 2.4vw, 34px); }
 .home-intro h3 {
   margin: 0;
-  font: 550 clamp(2.35rem, 3.7vw, 4.25rem)/.92 var(--font-display);
+  font: 550 clamp(2.45rem, 4.3vw, 4.85rem)/.92 var(--font-display);
   letter-spacing: -.034em;
 }
 
@@ -284,13 +286,15 @@ a { color: inherit; text-underline-offset: .24em; }
   align-items: baseline;
   flex-wrap: wrap;
   gap: 4px 12px;
-  margin: 8px 0 0;
+  margin: 9px 0 0;
   color: var(--muted);
   font-size: .875rem;
 }
 
 .home-meta > span + span { padding-inline-start: 12px; border-inline-start: 1px solid var(--rule); }
 .home-meta b { color: var(--ink); font-weight: 600; white-space: nowrap; }
+.home-price-link { color: inherit; text-decoration-color: var(--rule); text-underline-offset: .22em; }
+.home-price-link:hover { text-decoration-color: var(--accent); }
 .home-capacity-full {
   position: absolute;
   width: 1px;
@@ -300,126 +304,69 @@ a { color: inherit; text-underline-offset: .24em; }
   white-space: nowrap;
 }
 
-.home-gallery {
-  position: relative;
-  display: block;
-  width: 100%;
-  aspect-ratio: 1.4;
-  padding: 0;
-  border: 0;
-  overflow: hidden;
-  background: #242d27;
-  color: var(--light);
-  cursor: zoom-in;
-  touch-action: pan-y pinch-zoom;
+.home-lead, .home-rooms, .home-details-photos {
+  display: grid;
+  align-items: end;
+  gap: var(--photo-gap);
 }
 
-.home-gallery:disabled { cursor: default; }
-.home-gallery:disabled .home-expand { display: none; }
+.home-lead { grid-template-columns: minmax(0, 1fr) minmax(0, 1.75fr); }
+[data-home="family"] .home-lead { grid-template-columns: minmax(0, 1.38fr) minmax(0, 1fr); }
 
-.home-gallery img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+.home-rooms, .home-details-photos {
+  margin-inline: auto;
+  margin-top: clamp(28px, 4vw, 58px);
+}
+
+.home-rooms {
+  width: min(100%, 742px);
+  grid-template-columns: minmax(0, 1.22fr) minmax(0, 1fr);
+}
+
+.home-details-photos {
+  width: min(100%, 900px);
+  grid-template-columns: minmax(0, 1fr) minmax(0, .94fr) minmax(0, .76fr);
+}
+
+[data-home="family"] .home-rooms {
+  width: min(100%, 1090px);
+  grid-template-columns: minmax(0, 1.18fr) minmax(0, 1fr);
+}
+
+[data-home="family"] .home-details-photos {
+  width: min(100%, 740px);
+  grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr);
+}
+
+.home-photo { min-width: 0; margin: 0; }
+.home-photo-link { display: block; cursor: zoom-in; }
+.home-photo-link img { width: 100%; height: auto; }
+[data-home="family"] .home-photo--facade img {
+  aspect-ratio: 16 / 9;
   object-fit: cover;
-  object-position: 50% var(--home-photo-focus-y, 47%);
-  pointer-events: none;
-  user-select: none;
+  object-position: center 40%;
 }
+.home-photo-link:focus-visible { outline-offset: 3px; }
 
-/* Keep the frame steady and aim the portrait crops at the room furnishings. */
-.home-gallery img[src$="/guest-twin-lg.webp"] { --home-photo-focus-y: 89%; }
-.home-gallery img[src$="/guest-upper-lg.webp"] { --home-photo-focus-y: 94%; }
-.home-gallery img[src$="/guest-bunks-lg.webp"] { --home-photo-focus-y: 59%; }
-.home-gallery img[src$="/guest-living-lg.webp"],
-.home-gallery img[src$="/guest-kitchen-lg.webp"] { --home-photo-focus-y: 51%; }
-.home-gallery img[src$="/family-bath-lg.webp"] { --home-photo-focus-y: 60%; }
-
-.home-expand {
-  position: absolute;
-  inset: auto 9px 9px auto;
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  background: rgb(24 31 26 / .88);
-  pointer-events: none;
-}
-
-.home-gallery:focus-visible { outline-offset: 3px; }
-.home-gallery:hover .home-expand { background: var(--ink); }
-
-.home-viewer-bar {
-  min-height: 60px;
-  padding-block: 6px;
-  border-bottom: 1px solid var(--rule);
-}
-
-.home-viewer-bar, .photo-dialog-controls { container-type: inline-size; }
-
-.home-photo-controls {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto 44px 44px;
-  grid-template-areas: "caption jump previous next";
-  align-items: center;
-  gap: 0 7px;
-}
-
-.home-photo-controls[hidden] { display: none; }
-.home-photo-caption { grid-area: caption; margin: 0; font-size: .875rem; line-height: 1.3; }
-.home-photo-caption [data-photo-count] {
-  display: block;
-  margin-top: 3px;
+.home-photo figcaption {
+  margin-top: 7px;
   color: var(--muted);
-  font-size: .75rem;
-  font-variant-numeric: tabular-nums;
+  font-size: .8125rem;
+  line-height: 1.4;
 }
-
-.home-photo-jump {
-  grid-area: jump;
-  min-height: 44px;
-  padding: 0 4px;
-  border: 0;
-  background: transparent;
-  color: inherit;
-  font-size: .82rem;
-  font-weight: 550;
-  text-decoration: underline;
-  text-decoration-color: var(--rule);
-  text-underline-offset: .23em;
-  cursor: pointer;
-}
-
-.home-photo-jump:hover { text-decoration-color: currentColor; }
-
-.home-arrow {
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  border: 1px solid var(--rule);
-  border-radius: 50%;
-  background: transparent;
-  color: inherit;
-  cursor: pointer;
-}
-
-.home-arrow[data-previous] { grid-area: previous; }
-.home-arrow[data-next] { grid-area: next; }
-.home-arrow:hover { background: var(--linen); border-color: var(--muted); }
 
 .home-actions {
   --home-cta-width: 9.65rem;
   --home-action-gap: clamp(15px, 2.1vw, 30px);
   position: relative;
-  margin-top: clamp(12px, 1.55vw, 21px);
+  margin-top: clamp(20px, 2.4vw, 34px);
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
 }
 
 .home-button {
   position: absolute;
-  inset: 0 auto auto 0;
+  inset: 14px auto auto 0;
   width: var(--home-cta-width);
   min-height: 46px;
   padding-inline: 13px;
@@ -502,7 +449,7 @@ a { color: inherit; text-underline-offset: .24em; }
   overflow: auto;
   overscroll-behavior: contain;
   border: 0;
-  background: #242d27;
+  background: var(--ink);
   color: var(--light);
 }
 
@@ -514,26 +461,36 @@ body:has(.photo-dialog[open]) { overflow: hidden; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 9px;
+  gap: 12px;
+  margin-bottom: 10px;
 }
 
-.photo-dialog-header { margin-bottom: 9px; }
 .photo-dialog-header h2 { margin: 0; font: 550 clamp(1.7rem, 4vw, 2.8rem)/.95 var(--font-display); }
 
 .photo-stage {
-  height: min(64dvh, 650px);
+  height: min(66dvh, 650px);
   background: #1b231d;
   touch-action: pan-y pinch-zoom;
 }
 
 .photo-stage img { width: 100%; height: 100%; object-fit: contain; user-select: none; }
 
-.photo-dialog-controls { padding-top: 8px; }
-.photo-dialog .home-photo-caption [data-photo-count] { color: #e0ddd0; }
-.photo-dialog .home-photo-jump { text-decoration-color: var(--gallery-rule); }
-.photo-dialog .home-photo-jump:hover { text-decoration-color: currentColor; }
-.photo-dialog .home-arrow { border-color: var(--gallery-rule); }
-.photo-dialog .home-arrow:hover { background: #455145; }
+.photo-dialog-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px 44px;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.photo-caption { margin: 0; font-size: .875rem; line-height: 1.3; }
+.photo-caption [data-photo-count] {
+  display: block;
+  margin-top: 4px;
+  color: #e0ddd0;
+  font-size: .75rem;
+  font-variant-numeric: tabular-nums;
+}
 
 .photo-control {
   flex: 0 0 44px;
@@ -549,23 +506,71 @@ body:has(.photo-dialog[open]) { overflow: hidden; }
 }
 
 .photo-control:hover { background: #455145; }
+.photo-arrow { border-radius: 50%; }
 
 @media (max-width: 720px) {
-  .homes { padding-top: 34px; }
-  .homes-heading { display: block; margin-bottom: 23px; }
+  .homes { width: 100%; padding-top: 28px; padding-inline: var(--gutter); }
+  .homes-heading { display: block; margin-bottom: 14px; }
   .homes-heading h2 { font-size: clamp(2.55rem, 11vw, 4rem); }
-  .homes-nav { margin-top: 3px; }
-  .home-grid { grid-template-columns: minmax(0, 1fr); gap: 46px; }
-  .home-gallery { aspect-ratio: 1.27; }
-  .photo-stage { height: min(60dvh, 122vw); }
+  .homes-nav { margin-top: 4px; }
+  .home-card { --photo-gap: 12px; }
+  .home-intro { margin-bottom: 16px; }
+  .home-intro h3 { font-size: clamp(2.2rem, 8.8vw, 2.85rem); }
+
+  .home-rooms, .home-details-photos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+
+  .home-details-photos { margin-top: 20px; row-gap: 16px; }
+  .home-photo--upper { grid-column: 1 / -1; }
+
+  .home-photo--upper img {
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    object-position: 50% 76%;
+  }
+
+  [data-home="family"] .home-rooms {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  [data-home="family"] .home-rooms > :first-child { width: 86%; }
+  [data-home="family"] .home-photo--kitchen { width: 100%; }
+
+  [data-home="family"] .home-details-photos {
+    grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+    align-items: end;
+  }
+
+  .photo-stage { height: min(68dvh, 126vw); }
 }
 
-@container (max-width: 415px) {
-  .home-photo-controls {
-    grid-template-columns: minmax(0, 1fr) 44px 44px;
-    grid-template-areas: "caption caption caption" "jump previous next";
+@media (max-width: 560px) {
+  .home-lead, [data-home="family"] .home-lead {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
   }
-  .home-photo-jump { justify-self: start; min-height: 40px; padding-inline: 0 8px; }
+
+  /* The native 3:4 frame runs to both viewport edges on phones. */
+  [data-home="guest"] .home-photo--bedroom { margin-inline: calc(-1 * var(--gutter)); }
+  [data-home="guest"] .home-photo--bedroom figcaption { margin-inline: var(--gutter); }
+  [data-home="guest"] .home-photo--bedroom .home-photo-link:focus-visible { outline-offset: -4px; }
+  [data-home="family"] .home-photo--facade { margin-inline: calc(-1 * var(--gutter)); }
+  [data-home="family"] .home-photo--facade figcaption { margin-inline: var(--gutter); }
+  [data-home="family"] .home-photo--facade .home-photo-link:focus-visible { outline-offset: -4px; }
+}
+
+/* Keep the complete portrait in view when arriving from the cover on a short phone. */
+@media (max-width: 560px) and (max-height: 775px) {
+  .homes { padding-top: 12px; }
+  .homes-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+  .homes-heading h2 { font-size: 1.85rem; }
+  .homes-title-long { display: none; }
+  .homes-nav { margin-top: 0; }
+  .home-card { padding-top: 14px; }
+  .home-intro { margin-bottom: 12px; }
 }
 
 @media (max-width: 700px) {
